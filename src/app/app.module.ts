@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,6 +12,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {
+  RetryOnInternalServerErrorInterceptor,
+  INTERNAL_SERVER_ERROR_RETRY_LIMIT,
+} from './retry-on-internal-server-error.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,7 +32,17 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatSnackBarModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: INTERNAL_SERVER_ERROR_RETRY_LIMIT,
+      useValue: 3,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RetryOnInternalServerErrorInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
