@@ -1,0 +1,56 @@
+<mat-toolbar>
+  <h1>Demo</h1>
+</mat-toolbar>
+<main class="mt-12 w-screen h-16 flex flex-row justify-center">
+  <div *ngIf="isLoggedIn" class="flex flex-col">
+    <h1>You are logged in.</h1>
+
+    <button mat-raised-button color="accent" (click)="logout()">
+      Logout
+    </button>
+  </div>
+
+  <ng-container *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </ng-container>
+
+  <form
+    *ngIf="!isLoading && !isLoggedIn"
+    [formGroup]="formGroup"
+    (submit)="login()"
+    class="flex flex-col"
+  >
+    <mat-form-field class="mb-6">
+      <mat-label>Email</mat-label>
+      <input matInput name="email" type="email" [formControl]="email" />
+      <mat-error *ngIf="email.invalid">Email is not valid.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        name="password"
+        type="password"
+        [formControl]="password"
+      />
+      <mat-error *ngIf="password.invalid">Password is not valid.</mat-error>
+    </mat-form-field>
+
+    <div class="mt-4 flex flex-row justify-center">
+      <button mat-raised-button color="primary" [disabled]="formGroup.invalid">
+        Login
+      </button>
+    </div>
+
+    <div class="mt-4">
+      <a mat-button color="accent" href="/register"
+        >Don't have an account yet?</a
+      >
+    </div>
+
+    <p *ngIf="hasError" class="pt-4 text-red-400">
+      {{ errorMessage }}
+    </p>
+  </form>
+</main>
