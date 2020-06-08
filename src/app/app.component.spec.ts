@@ -214,12 +214,10 @@ describe('AppComponent', () => {
 
         describe('and the authentication fails', () => {
           beforeEach(() => {
-            testRequest.error(
-              (new HttpErrorResponse({
-                status: 401,
-                statusText: 'Unauthorized',
-              }) as unknown) as ErrorEvent
-            );
+            testRequest.error(new ErrorEvent('Unauthorized'), {
+              status: 401,
+              statusText: 'Unauthorized',
+            });
           });
 
           it('stops loading', () => {
