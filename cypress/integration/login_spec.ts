@@ -8,7 +8,7 @@ describe('The Login Screen', () => {
   });
 
   it('shows the Demo branding', () => {
-    cy.contains('Demo');
+    cy.contains('Demo: Retry on Internal Server Error');
   });
 
   it('has an email field', () => {

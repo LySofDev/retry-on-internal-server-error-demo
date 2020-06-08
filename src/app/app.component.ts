@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   /**
    * The application's title.
    */
-  title = 'retry-on-error-demo';
+  title = 'Demo: Retry on Internal Server Error';
   /**
    * True when the application is loading.
    */
