@@ -1,20 +1,69 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-
+/**
+ * The value of [n] for a one in [n] chance
+ * of a random Internal Server Error ocurring
+ * when handling a request.
+ *
+ * Ex.
+ *```
+ * n  | Random Error Chance
+ * ------------------------
+ * 0  | 0%
+ * 1  | 100%
+ * 2  | 50%
+ * 4  | 25%
+ * 5  | 20%
+ * 10 | 10%
+ * ```
+ */
 const RANDOM_INTERNAL_SERVER_ERROR_CHANCE: number = 10;
-
+/**
+ * The password to authenticate the user's
+ * credentials with.
+ */
+const PASSWORD_PRESET: string = 'password';
+/**
+ * The port the server will listen on.
+ */
 const PORT = 3000;
-
+/**
+ * The route for the authentication request.
+ */
 const LOGIN_ROUTE = '/login';
-
+/**
+ * Possible Error Messages
+ */
 enum ErrorMessage {
   RANDOM_ERROR = 'We dont know what happened',
   INVALID_EMAIL = 'This email is not valid',
   INVALID_PASSWORD = 'This password is not valid',
   FAILED_AUTHENTICATION = 'An account was not found for this email and password',
 }
-
+/**
+ * Authenticate a user based on a set of [email]
+ * and [password] credentials. The authentication
+ * attempt may randomly fail based on the chance of
+ * random error.
+ *
+ * It may also fail the validation of either
+ * the [email] or [password] based on the following
+ * criteria:
+ * - [email] must match the email regular expression.
+ * - [password] must be at least 8 characters long.
+ *
+ * Given that the credentials are valid, it will
+ * compare the password to a preset to mimic the
+ * actual authentication process. It will return
+ * an error if the password doesn't match the preset.
+ *
+ * @param email The user's unique email.
+ * @param password The user's password.
+ * @returns [hasError] will be true if an error was
+ * encountered during authentication and include
+ * the [errorMessage].
+ */
 function authenticate(
   email: string,
   password: string
@@ -46,7 +95,7 @@ function authenticate(
       errorMessage: ErrorMessage.INVALID_PASSWORD,
     };
   }
-  if (password !== 'password') {
+  if (password !== PASSWORD_PRESET) {
     return {
       hasError: true,
       errorMessage: ErrorMessage.FAILED_AUTHENTICATION,
@@ -56,11 +105,22 @@ function authenticate(
     hasError: false,
   };
 }
-
+/**
+ * The Mock Authentication Service application.
+ */
 const app = express();
-
+/**
+ * Allow Cross Origin Requests
+ */
 app.use(cors());
-
+/**
+ * Handles the authentication requests via
+ * a POST request to the [LOGIN_ROUTE]. It
+ * then calls the authenticate method and
+ * tests for errors. If no errors are found,
+ * it returns a 200 response. Otherwise, it
+ * forwards the error to the next handler.
+ */
 app.post(
   LOGIN_ROUTE,
   bodyParser.json(),
@@ -74,7 +134,13 @@ app.post(
     }
   }
 );
-
+/**
+ * This error handler will filter
+ * for authentication errors, attach
+ * the correct status code to the response
+ * and serve the error messages as part
+ * of the response body.
+ */
 app.use(
   (
     error: Error,
@@ -98,5 +164,7 @@ app.use(
     response.json(error);
   }
 );
-
+/**
+ * Initiate the app on the given [PORT].
+ */
 app.listen(PORT, () => console.log(`Listening on port ${PORT}.`));
