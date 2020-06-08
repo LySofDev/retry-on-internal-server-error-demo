@@ -200,6 +200,16 @@ describe('AppComponent', () => {
           it('resets the form', () => {
             expect(component.formGroup.pristine).toBeTruthy();
           });
+
+          describe('when logging out', () => {
+            beforeEach(() => {
+              component.logout();
+            });
+
+            it('is not logged in', () => {
+              expect(component.isLoggedIn).toBeFalsy();
+            });
+          });
         });
 
         describe('and the authentication fails', () => {
